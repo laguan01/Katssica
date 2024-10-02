@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>See You Soon!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f4f1de;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .title {
+            position: relative;
+            z-index: 10;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #3d405b;
+            margin-bottom: 20px;
+            width: max-content;
+            border-right: 3px solid #3d405b;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3.5s steps(30, end), blink 0.75s step-end infinite;
+        }
+
+        /* Typing effect */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #3d405b; }
+        }
+
+        .countdown {
+            position: relative;
+            z-index: 10;
+            font-size: 2.5rem;
+            background-color: rgba(61, 64, 91, 0.9);
+            width: 300px; /* Fixed width */
+            height: 150px; /* Fixed height */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            font-weight: 600;
+            color: #f4f1de;
+        }
+
+        #timer {
+            color: #f2cc8f;
+            animation: pulse 2s infinite;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="backgroundCanvas"></canvas>
+
+    <!-- Title added above the countdown box -->
+    <div class="title">Days until I see you!!!</div>
+
+    <div class="countdown" id="countdownBox">
+        <p id="timer">Loading countdown...</p>
+    </div>
+
+    <script>
+        // Set the date we're counting down to
+        const countdownDate = new Date("Oct 11, 2024 00:00:00").getTime();
+
+        // Confetti generator
+        function generateConfetti() {
+            const canvas = document.getElementById('backgroundCanvas');
+            const ctx = canvas.getContext('2d');
+            const confettiColors = ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#a0c4ff', '#bdb2ff', '#ffc6ff'];
+            const confetti = [];
+
+            for (let i = 0; i < 300; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 5 + 2,
+                    dx: Math.random() * 2 - 1,
+                    dy: Math.random() * 2 + 2,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                });
+            }
+
+            function drawConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confetti.forEach(particle => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                });
+            }
+
+            function updateConfetti() {
+                confetti.forEach(particle => {
+                    particle.x += particle.dx;
+                    particle.y += particle.dy;
+
+                    if (particle.y > canvas.height) {
+                        particle.y = 0;
+                    }
+                });
+            }
+
+            function animateConfetti() {
+                drawConfetti();
+                updateConfetti();
+                requestAnimationFrame(animateConfetti);
+            }
+
+            animateConfetti();
+        }
+
+        // Update the countdown every 1 second
+        const countdownFunction = setInterval(function () {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            if (distance < 0) {
+                clearInterval(countdownFunction);
+                document.getElementById("timer").innerHTML = "EXPIRED";
+                generateConfetti();
+            }
+        }, 1000);
+
+        // Ball animation in the background
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        const balls = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function Ball(x, y, dx, dy, radius, color) {
+            this.x = x;
+            this.y = y;
+            this.dx = dx;
+            this.dy = dy;
+            this.radius = radius;
+            this.color = color;
+
+            this.draw = function () {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            };
+
+            this.update = function (timerBox, titleBox) {
+                // Check collision with canvas edges
+                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                    this.dx = -this.dx;
+                }
+
+                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+                    this.dy = -this.dy;
+                }
+
+                // Check collision with the timer box
+                if (this.x - this.radius < timerBox.right && this.x + this.radius > timerBox.left &&
+                    this.y + this.radius > timerBox.top && this.y - this.radius < timerBox.bottom) {
+
+                    // Reverse the direction of the ball when it hits the timer box
+                    if (this.x > timerBox.left && this.x < timerBox.right) {
+                        this.dy = -this.dy; // Bounce vertically
+                    } else {
+                        this.dx = -this.dx; // Bounce horizontally
+                    }
+                }
+
+                // Check collision with the title box
+                if (this.x - this.radius < titleBox.right && this.x + this.radius > titleBox.left &&
+                    this.y + this.radius > titleBox.top && this.y - this.radius < titleBox.bottom) {
+
+                    // Reverse the direction of the ball when it hits the title box
+                    if (this.x > titleBox.left && this.x < titleBox.right) {
+                        this.dy = -this.dy; // Bounce vertically
+                    } else {
+                        this.dx = -this.dx; // Bounce horizontally
+                    }
+                }
+
+                this.x += this.dx;
+                this.y += this.dy;
+
+                this.draw();
+            };
+        }
+
+        function initBalls() {
+            const colors = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'];
+
+            // Get the bounding boxes of the countdown timer and title and add a 50px buffer around both
+            const countdownBox = document.getElementById('countdownBox');
+            const titleBox = document.querySelector('.title');
+            const timerBox = countdownBox.getBoundingClientRect();
+            const titleRect = titleBox.getBoundingClientRect();
+            const buffer = 50;
+
+            for (let i = 0; i < 50; i++) {
+                let radius = Math.random() * 30 + 10;
+                let x, y;
+
+                // Ensure no ball is spawned within the timer box, title box, or within 50px of both
+                do {
+                    x = Math.random() * (canvas.width - radius * 2) + radius;
+                    y = Math.random() * (canvas.height - radius * 2) + radius;
+                } while (
+                    (x + radius > timerBox.left - buffer && x - radius < timerBox.right + buffer &&
+                    y + radius > timerBox.top - buffer && y - radius < timerBox.bottom + buffer) ||
+                    (x + radius > titleRect.left - buffer && x - radius < titleRect.right + buffer &&
+                    y + radius > titleRect.top - buffer && y - radius < titleRect.bottom + buffer)
+                );
+
+                const dx = (Math.random() - 0.5) * 4;
+                const dy = (Math.random() - 0.5) * 4;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                balls.push(new Ball(x, y, dx, dy, radius, color));
+            }
+        }
+
+        function animateBalls() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const countdownBox = document.getElementById('countdownBox');
+            const titleBox = document.querySelector('.title');
+            const timerBox = countdownBox.getBoundingClientRect();
+            const titleRect = titleBox.getBoundingClientRect();
+
+            balls.forEach(ball => {
+                ball.update(timerBox, titleRect);
+            });
+
+            requestAnimationFrame(animateBalls);
+        }
+
+        initBalls();
+        animateBalls();
+
+        window.addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+
+</body>
+
+</html>
