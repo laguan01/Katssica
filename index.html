@@ -1,299 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>See You Soon!</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown with Moving Balls, Triangles, and Lines</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            position: relative;
+        }
 
-        body {
-            font-family: 'Raleway', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            background-color: #f4f1de;
-            margin: 0;
-            overflow: hidden;
-        }
+        .countdown-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
 
-        .title {
-            position: relative;
-            z-index: 10;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #3d405b;
-            margin-bottom: 20px;
-            width: max-content;
-            border-right: 3px solid #3d405b;
-            white-space: nowrap;
-            overflow: hidden;
-            animation: typing 3.5s steps(30, end), blink 0.75s step-end infinite;
-        }
+        .typewriter-text {
+            font-size: 2rem;
+            color: #2C3E50;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid;
+            width: fit-content;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
 
-        /* Typing effect */
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
 
-        @keyframes blink {
-            from, to { border-color: transparent; }
-            50% { border-color: #3d405b; }
-        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: black; }
+        }
 
-        .countdown {
-            position: relative;
-            z-index: 10;
-            font-size: 2.5rem;
-            background-color: rgba(61, 64, 91, 0.9);
-            width: 300px; /* Fixed width */
-            height: 150px; /* Fixed height */
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            font-weight: 600;
-            color: #f4f1de;
-        }
+        .timer-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
 
-        #timer {
-            color: #f2cc8f;
-            animation: pulse 2s infinite;
-        }
+        .box {
+            width: 50px; /* Smaller squares */
+            height: 50px;
+            background-color: #FF5733;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            transition: background-color 0.3s ease;
+        }
 
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+        .label {
+            font-size: 0.75rem; /* Smaller label text */
+            color: #2C3E50;
+            margin-top: 5px;
+        }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-    </style>
+        /* Shape Styles: Ball, Triangle, and Line */
+        .shape {
+            position: absolute;
+            opacity: 0.7;
+        }
+
+        .ball {
+            border-radius: 50%;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent; /* Adjusted size for smaller triangles */
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid;
+        }
+
+        .line {
+            height: 4px; /* Slightly thicker */
+            background-color: #3498DB;
+            width: 60px; /* Shorter lines */
+        }
+
+        /* Independent random movement */
+        @keyframes moveShape1 {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(200px, -300px); }
+            50% { transform: translate(100vw, 100vh); }
+            75% { transform: translate(-50vw, 200px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes moveShape2 {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-200px, 200px); }
+            50% { transform: translate(-100vw, -100vh); }
+            75% { transform: translate(50vw, -100px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes moveShape3 {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(300px, -100px); }
+            50% { transform: translate(100vw, 50vh); }
+            75% { transform: translate(-100vw, -50vh); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes moveShape4 {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-150px, 250px); }
+            50% { transform: translate(50vw, -100vh); }
+            75% { transform: translate(-25vw, 150px); }
+            100% { transform: translate(0, 0); }
+        }
+    </style>
 </head>
-
 <body>
 
-    <canvas id="backgroundCanvas"></canvas>
+<div class="countdown-container">
+    <h1 class="typewriter-text">Days Until I Get To See You!!!</h1>
+    <div class="timer-box">
+        <div>
+            <div class="box" id="days">0</div>
+            <div class="label">Days</div>
+        </div>
+        <div>
+            <div class="box" id="hours">0</div>
+            <div class="label">Hours</div>
+        </div>
+        <div>
+            <div class="box" id="minutes">0</div>
+            <div class="label">Minutes</div>
+        </div>
+        <div>
+            <div class="box" id="seconds">0</div>
+            <div class="label">Seconds</div>
+        </div>
+    </div>
+</div>
 
-    <!-- Title added above the countdown box -->
-    <div class="title">Days until I see you!!!</div>
+<script>
+    // Set the date we're counting down to
+    const countdownDate = new Date("Oct 12, 2024 00:00:00").getTime();
 
-    <div class="countdown" id="countdownBox">
-        <p id="timer">Loading countdown...</p>
-    </div>
+    // Update the count down every 1 second
+    const countdownFunction = setInterval(function() {
 
-    <script>
-        // Set the date we're counting down to
-        const countdownDate = new Date("Oct 11, 2024 00:00:00").getTime();
+        // Get today's date and time
+        const now = new Date().getTime();
 
-        // Confetti generator
-        function generateConfetti() {
-            const canvas = document.getElementById('backgroundCanvas');
-            const ctx = canvas.getContext('2d');
-            const confettiColors = ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#a0c4ff', '#bdb2ff', '#ffc6ff'];
-            const confetti = [];
+        // Find the distance between now and the countdown date
+        const distance = countdownDate - now;
 
-            for (let i = 0; i < 300; i++) {
-                confetti.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    r: Math.random() * 5 + 2,
-                    dx: Math.random() * 2 - 1,
-                    dy: Math.random() * 2 + 2,
-                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-                });
-            }
+        // Time calculations for days, hours, minutes and seconds
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            function drawConfetti() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                confetti.forEach(particle => {
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
-                    ctx.fillStyle = particle.color;
-                    ctx.fill();
-                });
-            }
+        // Update the countdown numbers in individual boxes
+        document.getElementById("days").innerHTML = days;
+        document.getElementById("hours").innerHTML = hours;
+        document.getElementById("minutes").innerHTML = minutes;
+        document.getElementById("seconds").innerHTML = seconds;
 
-            function updateConfetti() {
-                confetti.forEach(particle => {
-                    particle.x += particle.dx;
-                    particle.y += particle.dy;
+        // If the countdown is finished, display some text
+        if (distance < 0) {
+            clearInterval(countdownFunction);
+            document.getElementById("days").innerHTML = "0";
+            document.getElementById("hours").innerHTML = "0";
+            document.getElementById("minutes").innerHTML = "0";
+            document.getElementById("seconds").innerHTML = "0";
+        }
+    }, 1000);
 
-                    if (particle.y > canvas.height) {
-                        particle.y = 0;
-                    }
-                });
-            }
+    // Generate multiple shapes with random sizes, colors, and positions
+    function createShapes(numberOfShapes) {
+        const colors = ['#E74C3C', '#3498DB', '#F1C40F', '#2ECC71', '#9B59B6', '#1ABC9C', '#E67E22', '#16A085', '#2C3E50', '#D35400'];
+        const animations = ['moveShape1', 'moveShape2', 'moveShape3', 'moveShape4'];
+        const shapeTypes = ['ball', 'triangle', 'line'];
 
-            function animateConfetti() {
-                drawConfetti();
-                updateConfetti();
-                requestAnimationFrame(animateConfetti);
-            }
+        for (let i = 0; i < numberOfShapes; i++) {
+            const shape = document.createElement('div');
+            const shapeType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
 
-            animateConfetti();
-        }
+            shape.classList.add('shape', shapeType);
 
-        // Update the countdown every 1 second
-        const countdownFunction = setInterval(function () {
-            const now = new Date().getTime();
-            const distance = countdownDate - now;
+            // Random properties for each shape
+            const size = Math.floor(Math.random() * 50) + 10; // Adjusted size for shapes
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            shape.style.backgroundColor = color;
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            if (shapeType === 'ball') {
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                shape.style.borderRadius = '50%';
+            } else if (shapeType === 'triangle') {
+                shape.style.borderBottomColor = color;
+                shape.style.borderLeftWidth = `${size}px`;
+                shape.style.borderRightWidth = `${size}px`;
+                shape.style.borderBottomWidth = `${size * 2}px`;
+            } else if (shapeType === 'line') {
+                shape.style.width = `${size * 2}px`; // Shorter lines
+                shape.style.height = '4px'; // Thicker line
+            }
 
-            document.getElementById("timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            // Random position and animation
+            const x = Math.floor(Math.random() * window.innerWidth);
+            const y = Math.floor(Math.random() * window.innerHeight);
+            shape.style.left = `${x}px`;
+            shape.style.top = `${y}px`;
 
-            if (distance < 0) {
-                clearInterval(countdownFunction);
-                document.getElementById("timer").innerHTML = "EXPIRED";
-                generateConfetti();
-            }
-        }, 1000);
+            const animation = animations[Math.floor(Math.random() * animations.length)];
+            shape.style.animation = `${animation} ${Math.random() * 5 + 5}s linear infinite`;
 
-        // Ball animation in the background
-        const canvas = document.getElementById('backgroundCanvas');
-        const ctx = canvas.getContext('2d');
-        const balls = [];
+            // Append shape to the body
+            document.body.appendChild(shape);
+        }
+    }
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        function Ball(x, y, dx, dy, radius, color) {
-            this.x = x;
-            this.y = y;
-            this.dx = dx;
-            this.dy = dy;
-            this.radius = radius;
-            this.color = color;
-
-            this.draw = function () {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-                ctx.closePath();
-            };
-
-            this.update = function (timerBox, titleBox) {
-                // Check collision with canvas edges
-                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
-                    this.dx = -this.dx;
-                }
-
-                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
-                    this.dy = -this.dy;
-                }
-
-                // Check collision with the timer box
-                if (this.x - this.radius < timerBox.right && this.x + this.radius > timerBox.left &&
-                    this.y + this.radius > timerBox.top && this.y - this.radius < timerBox.bottom) {
-
-                    // Reverse the direction of the ball when it hits the timer box
-                    if (this.x > timerBox.left && this.x < timerBox.right) {
-                        this.dy = -this.dy; // Bounce vertically
-                    } else {
-                        this.dx = -this.dx; // Bounce horizontally
-                    }
-                }
-
-                // Check collision with the title box
-                if (this.x - this.radius < titleBox.right && this.x + this.radius > titleBox.left &&
-                    this.y + this.radius > titleBox.top && this.y - this.radius < titleBox.bottom) {
-
-                    // Reverse the direction of the ball when it hits the title box
-                    if (this.x > titleBox.left && this.x < titleBox.right) {
-                        this.dy = -this.dy; // Bounce vertically
-                    } else {
-                        this.dx = -this.dx; // Bounce horizontally
-                    }
-                }
-
-                this.x += this.dx;
-                this.y += this.dy;
-
-                this.draw();
-            };
-        }
-
-        function initBalls() {
-            const colors = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'];
-
-            // Get the bounding boxes of the countdown timer and title and add a 50px buffer around both
-            const countdownBox = document.getElementById('countdownBox');
-            const titleBox = document.querySelector('.title');
-            const timerBox = countdownBox.getBoundingClientRect();
-            const titleRect = titleBox.getBoundingClientRect();
-            const buffer = 50;
-
-            for (let i = 0; i < 50; i++) {
-                let radius = Math.random() * 30 + 10;
-                let x, y;
-
-                // Ensure no ball is spawned within the timer box, title box, or within 50px of both
-                do {
-                    x = Math.random() * (canvas.width - radius * 2) + radius;
-                    y = Math.random() * (canvas.height - radius * 2) + radius;
-                } while (
-                    (x + radius > timerBox.left - buffer && x - radius < timerBox.right + buffer &&
-                    y + radius > timerBox.top - buffer && y - radius < timerBox.bottom + buffer) ||
-                    (x + radius > titleRect.left - buffer && x - radius < titleRect.right + buffer &&
-                    y + radius > titleRect.top - buffer && y - radius < titleRect.bottom + buffer)
-                );
-
-                const dx = (Math.random() - 0.5) * 4;
-                const dy = (Math.random() - 0.5) * 4;
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                balls.push(new Ball(x, y, dx, dy, radius, color));
-            }
-        }
-
-        function animateBalls() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const countdownBox = document.getElementById('countdownBox');
-            const titleBox = document.querySelector('.title');
-            const timerBox = countdownBox.getBoundingClientRect();
-            const titleRect = titleBox.getBoundingClientRect();
-
-            balls.forEach(ball => {
-                ball.update(timerBox, titleRect);
-            });
-
-            requestAnimationFrame(animateBalls);
-        }
-
-        initBalls();
-        animateBalls();
-
-        window.addEventListener('resize', function () {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    </script>
+    // Create 30 shapes (a mix of balls, triangles, and lines)
+    createShapes(30);
+</script>
 
 </body>
-
 </html>
+
