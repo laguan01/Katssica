@@ -66,51 +66,16 @@
             color: #2C3E50;
             margin-top: 5px;
         }
-        .shape {
+        .cat {
+            font-size: 2rem;
             position: absolute;
-            opacity: 0.7;
+            z-index: 0;
         }
-        .ball {
-            border-radius: 50%;
-        }
-        .triangle {
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 30px solid;
-        }
-        .line {
-            height: 4px;
-            background-color: #3498DB;
-            width: 60px;
-        }
-        @keyframes moveShape1 {
+        @keyframes floatCat {
             0% { transform: translate(0, 0); }
-            25% { transform: translate(200px, -300px); }
-            50% { transform: translate(100vw, 100vh); }
-            75% { transform: translate(-50vw, 200px); }
-            100% { transform: translate(0, 0); }
-        }
-        @keyframes moveShape2 {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-200px, 200px); }
-            50% { transform: translate(-100vw, -100vh); }
-            75% { transform: translate(50vw, -100px); }
-            100% { transform: translate(0, 0); }
-        }
-        @keyframes moveShape3 {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(300px, -100px); }
-            50% { transform: translate(100vw, 50vh); }
-            75% { transform: translate(-100vw, -50vh); }
-            100% { transform: translate(0, 0); }
-        }
-        @keyframes moveShape4 {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-150px, 250px); }
-            50% { transform: translate(50vw, -100vh); }
-            75% { transform: translate(-25vw, 150px); }
+            25% { transform: translate(50vw, -50vh); }
+            50% { transform: translate(-30vw, 100vh); }
+            75% { transform: translate(30vw, -30vh); }
             100% { transform: translate(0, 0); }
         }
     </style>
@@ -163,49 +128,33 @@
         }
     }, 1000);
 
-    function createShapes(numberOfShapes) {
-        const colors = ['#E74C3C', '#3498DB', '#F1C40F', '#2ECC71', '#9B59B6', '#1ABC9C', '#E67E22', '#16A085', '#2C3E50', '#D35400'];
-        const animations = ['moveShape1', 'moveShape2', 'moveShape3', 'moveShape4'];
-        const shapeTypes = ['ball', 'triangle', 'line'];
+    // Create 100 floating cat emojis
+    function createFloatingCats(numCats) {
+        for (let i = 0; i < numCats; i++) {
+            const cat = document.createElement('div');
+            cat.classList.add('cat');
+            cat.textContent = '🐱';
+            
+            // Random initial position
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            cat.style.left = `${x}px`;
+            cat.style.top = `${y}px`;
 
-        for (let i = 0; i < numberOfShapes; i++) {
-            const shape = document.createElement('div');
-            const shapeType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+            // Random size for variety
+            const size = Math.random() * 2 + 1; // Between 1x and 3x normal size
+            cat.style.fontSize = `${size}rem`;
 
-            shape.classList.add('shape', shapeType);
+            // Random duration for the floating animation
+            const duration = Math.random() * 10 + 5; // Between 5s and 15s
+            cat.style.animation = `floatCat ${duration}s infinite linear`;
 
-            // Random properties for each shape
-            const size = Math.floor(Math.random() * 50) + 10; // Adjusted size for shapes
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            shape.style.backgroundColor = color;
-
-            if (shapeType === 'ball') {
-                shape.style.width = `${size}px`;
-                shape.style.height = `${size}px`;
-                shape.style.borderRadius = '50%';
-            } else if (shapeType === 'triangle') {
-                shape.style.borderBottomColor = color;
-                shape.style.borderLeftWidth = `${size}px`;
-                shape.style.borderRightWidth = `${size}px`;
-                shape.style.borderBottomWidth = `${size * 2}px`;
-            } else if (shapeType === 'line') {
-                shape.style.width = `${size * 2}px`; // Shorter lines
-                shape.style.height = '4px'; // Thicker line
-            }
-
-            const x = Math.floor(Math.random() * window.innerWidth);
-            const y = Math.floor(Math.random() * window.innerHeight);
-            shape.style.left = `${x}px`;
-            shape.style.top = `${y}px`;
-
-            const animation = animations[Math.floor(Math.random() * animations.length)];
-            shape.style.animation = `${animation} ${Math.random() * 5 + 5}s linear infinite`;
-
-            // Append shape to the body
-            document.body.appendChild(shape);
+            document.body.appendChild(cat);
         }
     }
-    createShapes(30);
+
+    // Generate 100 cats
+    createFloatingCats(100);
 </script>
 
 </body>
