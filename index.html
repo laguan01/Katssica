@@ -17,7 +17,6 @@
             overflow: hidden;
             position: relative;
         }
-
         .countdown-container {
             position: relative;
             z-index: 1;
@@ -27,7 +26,6 @@
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
-
         .typewriter-text {
             font-size: 2rem;
             color: #2C3E50;
@@ -37,26 +35,22 @@
             width: fit-content;
             animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
         }
-
         @keyframes typing {
             from { width: 0; }
             to { width: 100%; }
         }
-
         @keyframes blink-caret {
             from, to { border-color: transparent; }
             50% { border-color: black; }
         }
-
         .timer-box {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
         }
-
         .box {
-            width: 50px; /* Smaller squares */
+            width: 50px;
             height: 50px;
             background-color: #FF5733;
             color: white;
@@ -67,38 +61,30 @@
             border-radius: 12px;
             transition: background-color 0.3s ease;
         }
-
         .label {
-            font-size: 0.75rem; /* Smaller label text */
+            font-size: 0.75rem; 
             color: #2C3E50;
             margin-top: 5px;
         }
-
-        /* Shape Styles: Ball, Triangle, and Line */
         .shape {
             position: absolute;
             opacity: 0.7;
         }
-
         .ball {
             border-radius: 50%;
         }
-
         .triangle {
             width: 0;
             height: 0;
-            border-left: 15px solid transparent; /* Adjusted size for smaller triangles */
+            border-left: 15px solid transparent;
             border-right: 15px solid transparent;
             border-bottom: 30px solid;
         }
-
         .line {
-            height: 4px; /* Slightly thicker */
+            height: 4px;
             background-color: #3498DB;
-            width: 60px; /* Shorter lines */
+            width: 60px;
         }
-
-        /* Independent random movement */
         @keyframes moveShape1 {
             0% { transform: translate(0, 0); }
             25% { transform: translate(200px, -300px); }
@@ -106,7 +92,6 @@
             75% { transform: translate(-50vw, 200px); }
             100% { transform: translate(0, 0); }
         }
-
         @keyframes moveShape2 {
             0% { transform: translate(0, 0); }
             25% { transform: translate(-200px, 200px); }
@@ -114,7 +99,6 @@
             75% { transform: translate(50vw, -100px); }
             100% { transform: translate(0, 0); }
         }
-
         @keyframes moveShape3 {
             0% { transform: translate(0, 0); }
             25% { transform: translate(300px, -100px); }
@@ -122,7 +106,6 @@
             75% { transform: translate(-100vw, -50vh); }
             100% { transform: translate(0, 0); }
         }
-
         @keyframes moveShape4 {
             0% { transform: translate(0, 0); }
             25% { transform: translate(-150px, 250px); }
@@ -135,7 +118,8 @@
 <body>
 
 <div class="countdown-container">
-    <h1 class="typewriter-text">Days Until I Get To See You!!!</h1>
+    <h1 class="typewriter-greeting">Hello Jessica!</h1>
+    <h2 class="typewriter-text">Counting Down The Days Until I See You!</h2>
     <div class="timer-box">
         <div>
             <div class="box" id="days">0</div>
@@ -157,31 +141,19 @@
 </div>
 
 <script>
-    // Set the date we're counting down to
     const countdownDate = new Date("Oct 12, 2024 00:00:00").getTime();
-
-    // Update the count down every 1 second
-    const countdownFunction = setInterval(function() {
-
-        // Get today's date and time
+    const countdownFunction = setInterval(function() { 
         const now = new Date().getTime();
-
-        // Find the distance between now and the countdown date
-        const distance = countdownDate - now;
-
-        // Time calculations for days, hours, minutes and seconds
+        const distance = countdownDate - now; 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        // Update the countdown numbers in individual boxes
         document.getElementById("days").innerHTML = days;
         document.getElementById("hours").innerHTML = hours;
         document.getElementById("minutes").innerHTML = minutes;
         document.getElementById("seconds").innerHTML = seconds;
-
-        // If the countdown is finished, display some text
         if (distance < 0) {
             clearInterval(countdownFunction);
             document.getElementById("days").innerHTML = "0";
@@ -191,7 +163,6 @@
         }
     }, 1000);
 
-    // Generate multiple shapes with random sizes, colors, and positions
     function createShapes(numberOfShapes) {
         const colors = ['#E74C3C', '#3498DB', '#F1C40F', '#2ECC71', '#9B59B6', '#1ABC9C', '#E67E22', '#16A085', '#2C3E50', '#D35400'];
         const animations = ['moveShape1', 'moveShape2', 'moveShape3', 'moveShape4'];
@@ -222,7 +193,6 @@
                 shape.style.height = '4px'; // Thicker line
             }
 
-            // Random position and animation
             const x = Math.floor(Math.random() * window.innerWidth);
             const y = Math.floor(Math.random() * window.innerHeight);
             shape.style.left = `${x}px`;
@@ -235,8 +205,6 @@
             document.body.appendChild(shape);
         }
     }
-
-    // Create 30 shapes (a mix of balls, triangles, and lines)
     createShapes(30);
 </script>
 
